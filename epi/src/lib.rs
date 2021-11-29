@@ -252,6 +252,10 @@ pub struct NativeOptions {
     /// You control the transparency with [`App::clear_color()`].
     /// You should avoid having a [`egui::CentralPanel`], or make sure its frame is also transparent.
     pub transparent: bool,
+
+    /// Number of samples for the backend to use for multisampled Anti-Aliasing.
+    /// Default: 0
+    pub multisample: u16,
 }
 
 impl Default for NativeOptions {
@@ -268,6 +272,7 @@ impl Default for NativeOptions {
             max_window_size: None,
             resizable: true,
             transparent: false,
+            multisample: 0,
         }
     }
 }

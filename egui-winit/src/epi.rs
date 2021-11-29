@@ -21,6 +21,7 @@ pub fn window_builder(
         max_window_size,
         resizable,
         transparent,
+        multisample: _,
     } = native_options;
 
     let window_icon = icon_data.clone().and_then(load_icon);

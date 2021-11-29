@@ -17,12 +17,14 @@ impl epi::backend::RepaintSignal for GliumRepaintSignal {
 fn create_display(
     window_builder: glutin::window::WindowBuilder,
     event_loop: &glutin::event_loop::EventLoop<RequestRepaintEvent>,
+    samples: u16,
 ) -> glium::Display {
     let context_builder = glutin::ContextBuilder::new()
         .with_depth_buffer(0)
         .with_srgb(true)
         .with_stencil_buffer(0)
-        .with_vsync(true);
+        .with_vsync(true)
+        .with_multisampling(samples);
 
     glium::Display::new(window_builder, context_builder, event_loop).unwrap()
 }
@@ -38,7 +40,7 @@ pub fn run(app: Box<dyn epi::App>, native_options: &epi::NativeOptions) -> ! {
     let window_builder =
         egui_winit::epi::window_builder(native_options, &window_settings).with_title(app.name());
     let event_loop = glutin::event_loop::EventLoop::with_user_event();
-    let display = create_display(window_builder, &event_loop);
+    let display = create_display(window_builder, &event_loop, native_options.multisample);
 
     let repaint_signal = std::sync::Arc::new(GliumRepaintSignal(std::sync::Mutex::new(
         event_loop.create_proxy(),

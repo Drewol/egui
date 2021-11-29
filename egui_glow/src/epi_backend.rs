@@ -13,8 +13,9 @@ impl epi::backend::RepaintSignal for GlowRepaintSignal {
 
 #[allow(unsafe_code)]
 fn create_display(
-    window_builder: winit::window::WindowBuilder,
-    event_loop: &winit::event_loop::EventLoop<RequestRepaintEvent>,
+    window_builder: glutin::window::WindowBuilder,
+    event_loop: &glutin::event_loop::EventLoop<RequestRepaintEvent>,
+    samples: u16,
 ) -> (
     glutin::WindowedContext<glutin::PossiblyCurrent>,
     glow::Context,
@@ -25,6 +26,7 @@ fn create_display(
             .with_srgb(true)
             .with_stencil_buffer(0)
             .with_vsync(true)
+            .with_multisampling(samples)
             .build_windowed(window_builder, event_loop)
             .unwrap()
             .make_current()
@@ -53,7 +55,7 @@ pub fn run(app: Box<dyn epi::App>, native_options: &epi::NativeOptions) -> ! {
     let window_builder =
         egui_winit::epi::window_builder(native_options, &window_settings).with_title(app.name());
     let event_loop = winit::event_loop::EventLoop::with_user_event();
-    let (gl_window, gl) = create_display(window_builder, &event_loop);
+    let (gl_window, gl) = create_display(window_builder, &event_loop, native_options.multisample);
 
     let repaint_signal = std::sync::Arc::new(GlowRepaintSignal(std::sync::Mutex::new(
         event_loop.create_proxy(),
